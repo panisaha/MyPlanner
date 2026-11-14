@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MyPlanner - Tasks</title>
+    
+    <!-- لود کردن فونت‌آوسام و فایل استایل مشترک -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* استایل‌های اختصاصی صفحه تسک‌ها */
+        .task-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .input-group input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-main);
+            color: var(--text-color);
+            outline: none;
+        }
+        .input-group button {
+            padding: 12px 20px;
+            font-size: 16px;
+        }
+        ul.task-list {
+            list-style: none;
+        }
+        li.task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: var(--bg-main);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-right: 4px solid var(--accent);
+        }
+        li.task-item.completed span {
+            text-decoration: line-through;
+            color: #666;
+        }
+        li.task-item span {
+            flex: 1;
+            cursor: pointer;
+        }
+        .delete-btn {
+            background: transparent;
+            color: var(--accent);
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- نوار دکمه‌ها (ناوبری) -->
+        <div class="navbar">
+            <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> Home</a>
+            <a href="notes.html" class="nav-btn"><i class="fas fa-book-open"></i> Notes</a>
+            <a href="tasks.html" class="nav-btn active"><i class="fas fa-tasks"></i> Tasks</a>
+            <a href="timer.html" class="nav-btn"><i class="fas fa-clock"></i> Timer</a>
+            <a href="links.html" class="nav-btn"><i class="fas fa-link"></i> Links</a>
+            <a href="alarm.html" class="nav-btn"><i class="fas fa-bell"></i> Alarm</a>
+            <a href="support.html" class="nav-btn"><i class="fas fa-headset"></i> Support</a>
+        </div>
+
+        <h1 style="text-align: center; color: var(--accent); margin-bottom: 20px;">My Tasks</h1>
+
+        <div class="task-container">
+            <!-- کادر اضافه کردن تسک -->
+            <div class="input-group">
+                <input type="text" id="taskInput" placeholder="What needs to be done?" onkeypress="if(event.key==='Enter') addTask()">
+                <button onclick="addTask()"><i class="fas fa-plus"></i> Add</button>
+            </div>
+
+            <!-- لیست تسک‌ها -->
+            <ul class="task-list" id="taskList"></ul>
+        </div>
+    </div>
+
+    <script>
+        // ================== منطق تسک‌ها ==================
+        let tasks = JSON.parse(localStorage.getItem('myPlannerTasks')) || [];
+        const taskInput = document.getElementById('taskInput');
+        const taskList = document.getElementById('taskList');
+
+        function renderTasks() {
+            taskList.innerHTML = '';
+            tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.className = `task-item ${task.completed ? 'completed' : ''}`;
+                li.innerHTML = `
+                    <span onclick="toggleTask(${index})">${task.text}</span>
+                    <button class="delete-btn" onclick="deleteTask(${index})"><i class="fas fa-trash"></i></button>
+                `;
+                taskList.appendChild(li);
+            });
+            // ذخیره در حافظه
+            localStorage.setItem('myPlannerTasks', JSON.stringify(tasks));
+        }
+
+        function addTask() {
+            const text = taskInput.value.trim();
+            if (text) {
+                tasks.push({ text: text, completed: false });
+                taskInput.value = '';
+                renderTasks();
+            }
+        }
+
+        function toggleTask(index) {
+            tasks[index].completed = !tasks[index].completed;
+            renderTasks();
+        }
+
+        function deleteTask(index) {
+            tasks.splice(index, 1);
+            renderTasks();
+        }
+
+        // رندر اولیه
+        renderTasks();
+    </script>
+  <script src="app.js"></script>
+</body>
+</html>
