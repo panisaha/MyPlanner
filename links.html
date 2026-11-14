@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MyPlanner - Links</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        .links-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .link-item {
+            background: var(--bg-main);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            transition: 0.3s;
+        }
+        .link-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+        }
+        .link-item i {
+            font-size: 30px;
+            color: var(--accent);
+            margin-bottom: 10px;
+            display: block;
+        }
+        .add-link-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .add-link-form input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-main);
+            color: var(--text-color);
+            outline: none;
+            min-width: 150px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <div class="navbar">
+            <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> Home</a>
+            <a href="notes.html" class="nav-btn"><i class="fas fa-book-open"></i> Notes</a>
+            <a href="tasks.html" class="nav-btn"><i class="fas fa-tasks"></i> Tasks</a>
+            <a href="timer.html" class="nav-btn"><i class="fas fa-clock"></i> Timer</a>
+            <a href="links.html" class="nav-btn active"><i class="fas fa-link"></i> Links</a>
+            <a href="alarm.html" class="nav-btn"><i class="fas fa-bell"></i> Alarm</a>
+            <a href="support.html" class="nav-btn"><i class="fas fa-headset"></i> Support</a>
+        </div>
+
+        <div class="links-container">
+            <h2 style="text-align: center; color: var(--accent); margin-bottom: 20px;">Quick Links</h2>
+            
+            <div class="add-link-form">
+                <input type="text" id="linkName" placeholder="Site Name (e.g., GitHub)">
+                <input type="url" id="linkUrl" placeholder="https://...">
+                <button onclick="addLink()"><i class="fas fa-plus"></i> Add</button>
+            </div>
+
+            <div class="links-grid" id="linksGrid">
+                <!-- لینک‌ها اینجا نمایش داده می‌شن -->
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+
+    <script>
+        let links = JSON.parse(localStorage.getItem('myPlannerLinks')) || [];
+        const linksGrid = document.getElementById('linksGrid');
+
+        function renderLinks() {
+            linksGrid.innerHTML = '';
+            links.forEach((link, index) => {
+                const a = document.createElement('a');
+                a.href = link.url;
+                a.target = '_blank';
+                a.className = 'link-item';
+                a.innerHTML = `
+                    <i class="fas fa-globe"></i>
+                    <span>${link.name}</span>
+                    <button onclick="deleteLink(event, ${index})" style="background:transparent; border:none; color:#ff4d4d; margin-top:10px; cursor:pointer;"><i class="fas fa-trash"></i></button>
+                `;
+                linksGrid.appendChild(a);
+            });
+            localStorage.setItem('myPlannerLinks', JSON.stringify(links));
+        }
+
+        function addLink() {
+            const name = document.getElementById('linkName').value.trim();
+            const url = document.getElementById('linkUrl').value.trim();
+            if (name && url) {
+                links.push({ name, url });
+                document.getElementById('linkName').value = '';
+                document.getElementById('linkUrl').value = '';
+                renderLinks();
+            }
+        }
+
+        function deleteLink(e, index) {
+            e.preventDefault(); // جلوگیری از باز شدن لینک
+            links.splice(index, 1);
+            renderLinks();
+        }
+
+        renderLinks();
+    </script>
+</body>
+</html>
