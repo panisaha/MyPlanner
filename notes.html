@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MyPlanner - Notes</title>
+    
+    <!-- لود کردن فونت‌آوسام و فایل استایل مشترک -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* استایل‌های اختصاصی صفحه یادداشت‌ها */
+        .notes-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .notes-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .notes-input-group input, 
+        .notes-input-group textarea {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-main);
+            color: var(--text-color);
+            outline: none;
+            font-family: inherit;
+        }
+        .notes-input-group textarea {
+            resize: none;
+            height: 100px;
+        }
+        .notes-input-group button {
+            align-self: flex-end;
+            padding: 10px 20px;
+        }
+        .notes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .note-item {
+            background: var(--bg-main);
+            padding: 15px;
+            border-radius: 10px;
+            border-right: 4px solid var(--accent);
+            position: relative;
+        }
+        .note-item h3 {
+            color: var(--accent);
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+        .note-item p {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            white-space: pre-wrap; /* حفظ فاصله‌ها و خطوط جدید */
+        }
+        .note-item .delete-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px; /* چون صفحه فارسی نیست، چپ می‌ذاریم */
+            background: transparent;
+            border: none;
+            color: #ff4d4d;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- نوار دکمه‌ها (ناوبری) -->
+        <div class="navbar">
+            <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> Home</a>
+            <a href="notes.html" class="nav-btn active"><i class="fas fa-book-open"></i> Notes</a>
+            <a href="tasks.html" class="nav-btn"><i class="fas fa-tasks"></i> Tasks</a>
+            <a href="timer.html" class="nav-btn"><i class="fas fa-clock"></i> Timer</a>
+            <a href="links.html" class="nav-btn"><i class="fas fa-link"></i> Links</a>
+            <a href="alarm.html" class="nav-btn"><i class="fas fa-bell"></i> Alarm</a>
+            <a href="support.html" class="nav-btn"><i class="fas fa-headset"></i> Support</a>
+        </div>
+
+        <h1 style="text-align: center; color: var(--accent); margin-bottom: 20px;">My Notes</h1>
+
+        <div class="notes-container">
+            <!-- کادر اضافه کردن یادداشت -->
+            <div class="notes-input-group">
+                <input type="text" id="noteTitle" placeholder="Note Title...">
+                <textarea id="noteContent" placeholder="Write your note here..."></textarea>
+                <button onclick="addNote()"><i class="fas fa-plus"></i> Add Note</button>
+            </div>
+
+            <!-- لیست یادداشت‌ها -->
+            <div class="notes-list" id="notesList"></div>
+        </div>
+    </div>
+
+    <!-- لود کردن app.js برای کادر پروفایل -->
+    <script src="app.js"></script>
+
+    <script>
+        // ================== منطق یادداشت‌ها ==================
+        let notes = JSON.parse(localStorage.getItem('myPlannerNotes')) || [];
+        const noteTitle = document.getElementById('noteTitle');
+        const noteContent = document.getElementById('noteContent');
+        const notesList = document.getElementById('notesList');
+
+        function renderNotes() {
+            notesList.innerHTML = '';
+            notes.forEach((note, index) => {
+                const div = document.createElement('div');
+                div.className = 'note-item';
+                div.innerHTML = `
+                    <button class="delete-btn" onclick="deleteNote(${index})"><i class="fas fa-trash"></i></button>
+                    <h3>${note.title}</h3>
+                    <p>${note.content}</p>
+                `;
+                notesList.appendChild(div);
+            });
+            // ذخیره در حافظه
+            localStorage.setItem('myPlannerNotes', JSON.stringify(notes));
+        }
+
+        function addNote() {
+            const title = noteTitle.value.trim();
+            const content = noteContent.value.trim();
+            
+            if (title || content) {
+                notes.push({ 
+                    title: title || 'Untitled', 
+                    content: content || '' 
+                });
+                noteTitle.value = '';
+                noteContent.value = '';
+                renderNotes();
+            }
+        }
+
+        function deleteNote(index) {
+            notes.splice(index, 1);
+            renderNotes();
+        }
+
+        // رندر اولیه
+        renderNotes();
+    </script>
+</body>
+  </html>
