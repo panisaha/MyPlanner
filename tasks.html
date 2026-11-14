@@ -21,6 +21,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         .input-group input {
             flex: 1;
@@ -30,6 +31,16 @@
             background: var(--bg-main);
             color: var(--text-color);
             outline: none;
+            min-width: 200px;
+        }
+        .input-group select {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-main);
+            color: var(--text-color);
+            outline: none;
+            cursor: pointer;
         }
         .input-group button {
             padding: 12px 20px;
@@ -46,8 +57,14 @@
             background: var(--bg-main);
             border-radius: 8px;
             margin-bottom: 10px;
-            border-right: 4px solid var(--accent);
+            border-right: 4px solid var(--accent); /* پیش‌فرض زرشکی */
         }
+        
+        /* اولویت‌بندی رنگ‌ها */
+        li.task-item.priority-high { border-right-color: #ff4d4d; } /* قرمز */
+        li.task-item.priority-medium { border-right-color: #ffc107; } /* زرد */
+        li.task-item.priority-low { border-right-color: #4caf50; } /* سبز */
+
         li.task-item.completed span {
             text-decoration: line-through;
             color: #666;
@@ -86,6 +103,11 @@
             <!-- کادر اضافه کردن تسک -->
             <div class="input-group">
                 <input type="text" id="taskInput" placeholder="What needs to be done?" onkeypress="if(event.key==='Enter') addTask()">
+                <select id="prioritySelect">
+                    <option value="low">Low (Green)</option>
+                    <option value="medium" selected>Medium (Yellow)</option>
+                    <option value="high">High (Red)</option>
+                </select>
                 <button onclick="addTask()"><i class="fas fa-plus"></i> Add</button>
             </div>
 
@@ -94,17 +116,22 @@
         </div>
     </div>
 
+    <!-- لود کردن app.js برای کادر پروفایل -->
+    <script src="app.js"></script>
+
     <script>
         // ================== منطق تسک‌ها ==================
         let tasks = JSON.parse(localStorage.getItem('myPlannerTasks')) || [];
         const taskInput = document.getElementById('taskInput');
+        const prioritySelect = document.getElementById('prioritySelect');
         const taskList = document.getElementById('taskList');
 
         function renderTasks() {
             taskList.innerHTML = '';
             tasks.forEach((task, index) => {
                 const li = document.createElement('li');
-                li.className = `task-item ${task.completed ? 'completed' : ''}`;
+                // اضافه کردن کلاس اولویت
+                li.className = `task-item ${task.completed ? 'completed' : ''} priority-${task.priority || 'medium'}`;
                 li.innerHTML = `
                     <span onclick="toggleTask(${index})">${task.text}</span>
                     <button class="delete-btn" onclick="deleteTask(${index})"><i class="fas fa-trash"></i></button>
@@ -118,7 +145,11 @@
         function addTask() {
             const text = taskInput.value.trim();
             if (text) {
-                tasks.push({ text: text, completed: false });
+                tasks.push({ 
+                    text: text, 
+                    completed: false, 
+                    priority: prioritySelect.value 
+                });
                 taskInput.value = '';
                 renderTasks();
             }
@@ -137,6 +168,5 @@
         // رندر اولیه
         renderTasks();
     </script>
-  <script src="app.js"></script>
 </body>
 </html>
