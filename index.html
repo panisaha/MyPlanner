@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MyPlanner - Home</title>
+    
+    <!-- لود کردن فونت‌آوسام (برای آیکون‌ها) و فایل استایل مشترک -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* ==========================================
+           استایل‌های اختصاصی صفحه اصلی
+           ========================================== */
+        
+        /* تنظیمات منوی تنظیمات (Sidebar) */
+        #settings-sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100vh;
+            background: var(--bg-main);
+            border-right: 2px solid var(--accent);
+            z-index: 10000;
+            padding: 20px;
+            transition: left 0.3s ease;
+            color: var(--text-color);
+            box-shadow: 5px 0 20px rgba(0,0,0,0.5);
+        }
+        #settings-sidebar.open { left: 0; }
+        
+        /* دکمه چرخ‌دنده */
+        #settings-btn {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 9999;
+            background: transparent;
+            border: none;
+            font-size: 28px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        #settings-btn:hover { transform: rotate(90deg); }
+
+        /* کادر پروفایل */
+        #profile-box {
+            position: fixed;
+            bottom: 20px;
+            right: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--bg-card);
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            z-index: 9998;
+            width: 50px;
+        }
+        #profile-img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 4px;
+            border: 2px solid var(--accent);
+        }
+        #profile-name {
+            font-size: 10px;
+            text-align: center;
+            word-break: break-all;
+            color: var(--text-color);
+        }
+
+        /* نوار دکمه‌ها */
+        .navbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            margin-top: 60px; /* برای فاصله از چرخ‌دنده */
+        }
+        .nav-btn {
+            background-color: var(--accent);
+            color: #f0e6d2;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+
+        /* کادر اصلی (ساعت و تاریخ) */
+        .dashboard-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px 20px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+        .greeting { font-size: 2.5rem; margin-bottom: 10px; }
+        .clock { font-size: 3.5rem; font-weight: bold; color: var(--accent); margin: 15px auto; display: block; }
+        .date { font-size: 1.2rem; color: #aaa; margin-bottom: 20px; }
+        .quote-box { background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 15px; font-style: italic; color: #ccc; border-left: 4px solid var(--accent); }
+    </style>
+</head>
+<body>
+
+    <!-- دکمه چرخ‌دنده (تنظیمات) -->
+    <button id="settings-btn"><i class="fas fa-cog"></i></button>
+
+    <!-- منوی تنظیمات (Sidebar) -->
+    <div id="settings-sidebar">
+        <h2 style="color: var(--accent); border-bottom: 1px solid #333; padding-bottom: 10px;">Settings</h2>
+        
+        <h3 style="margin-top: 20px;">Account</h3>
+        <input type="text" id="usernameInput" placeholder="Your Name" style="width: 100%; padding: 10px; margin-bottom: 10px; background: var(--bg-card); border: 1px solid #333; color: white; border-radius: 8px;">
+        <button id="saveNameBtn" style="width: 100%; padding: 10px; border-radius: 8px; background: var(--accent); color: white; border: none; cursor: pointer;">Change Account</button>
+
+        <h3 style="margin-top: 20px;">Theme</h3>
+        <label style="display: flex; align-items: center; margin-bottom: 10px; cursor: pointer;">
+            <input type="radio" name="themeMode" value="light" style="margin-right: 10px;"> Day Mode
+        </label>
+        <label style="display: flex; align-items: center; cursor: pointer;">
+            <input type="radio" name="themeMode" value="dark" style="margin-right: 10px;" checked> Night Mode
+        </label>
+    </div>
+
+    <!-- کادر پروفایل -->
+    <div id="profile-box">
+        <img id="profile-img" src="icon-192x192.png" alt="Profile">
+        <span id="profile-name">User</span>
+    </div>
+
+    <!-- محتوای اصلی -->
+    <div class="app-wrapper">
+        <!-- نوار دکمه‌ها -->
+        <div class="navbar">
+            <a href="index.html" class="nav-btn active"><i class="fas fa-home"></i> Home</a>
+            <a href="notes.html" class="nav-btn"><i class="fas fa-book-open"></i> Notes</a>
+            <a href="tasks.html" class="nav-btn"><i class="fas fa-tasks"></i> Tasks</a>
+            <a href="timer.html" class="nav-btn"><i class="fas fa-clock"></i> Timer</a>
+            <a href="links.html" class="nav-btn"><i class="fas fa-link"></i> Links</a>
+            <a href="alarm.html" class="nav-btn"><i class="fas fa-bell"></i> Alarm</a>
+            <a href="support.html" class="nav-btn"><i class="fas fa-headset"></i> Support</a>
+        </div>
+
+        <!-- کادر اصلی (ساعت) -->
+        <div class="dashboard-card">
+            <h1 class="greeting" id="greeting">Good Afternoon!</h1>
+            <div class="clock" id="clock">00:00:00</div>
+            <div class="date" id="date">Loading Date...</div>
+            <div class="quote-box" id="quote">
+                "The secret of getting ahead is getting started."
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================== ۱. منطق ساعت و تاریخ ==================
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').innerText = `${hours}:${minutes}:${seconds}`;
+
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date').innerText = now.toLocaleDateString('en-US', options);
+
+            const hour = now.getHours();
+            let greeting = "Good Evening!";
+            if (hour < 12) greeting = "Good Morning!";
+            else if (hour < 18) greeting = "Good Afternoon!";
+            document.getElementById('greeting').innerText = greeting;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ================== ۲. منطق تنظیمات (منو و تم) ==================
+        const sidebar = document.getElementById('settings-sidebar');
+        const settingsBtn = document.getElementById('settings-btn');
+
+        // باز و بسته کردن منو
+        settingsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.add('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !settingsBtn.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // تغییر تم
+        const themeRadios = document.querySelectorAll('input[name="themeMode"]');
+        themeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'light') {
+                    document.body.classList.add('light-mode');
+                    localStorage.setItem('themeMode', 'light');
+                } else {
+                    document.body.classList.remove('light-mode');
+                    localStorage.setItem('themeMode', 'dark');
+                }
+            });
+        });
+
+        // لود کردن تم ذخیره شده
+        if (localStorage.getItem('themeMode') === 'light') {
+            document.body.classList.add('light-mode');
+            document.querySelector('input[value="light"]').checked = true;
+        }
+
+        // ================== ۳. منطق نام کاربری و پروفایل ==================
+        const nameInput = document.getElementById('usernameInput');
+        const profileName = document.getElementById('profile-name');
+        
+        const savedName = localStorage.getItem('userName') || 'User';
+        nameInput.value = savedName;
+        profileName.innerText = savedName;
+
+        document.getElementById('saveNameBtn').addEventListener('click', () => {
+            const newName = nameInput.value || 'User';
+            localStorage.setItem('userName', newName);
+            profileName.innerText = newName;
+            alert('Name saved!');
+        });
+    </script>
+</body>
+  </html>
