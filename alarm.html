@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MyPlanner - Alarm</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* استایل‌های اختصاصی صفحه آلارم */
+        .alarm-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        /* فرم تنظیم آلارم */
+        .alarm-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .alarm-form input[type="text"] {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-main);
+            color: var(--text-color);
+            outline: none;
+        }
+        
+        /* انتخابگر زمان (ساعت و دقیقه) */
+        .time-picker {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-size: 2rem;
+            color: var(--text-color);
+        }
+        .time-picker select {
+            font-size: 2rem;
+            padding: 10px;
+            border-radius: 10px;
+            background: var(--bg-main);
+            color: var(--accent);
+            border: 1px solid var(--border-color);
+            outline: none;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        /* انتخاب روزهای هفته */
+        .days-picker {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .day-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.2s;
+        }
+        .day-btn.selected {
+            background: var(--accent);
+            border-color: var(--text-color);
+        }
+
+        /* لیست آلارم‌ها */
+        .alarm-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .alarm-item {
+            background: var(--bg-main);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--accent);
+        }
+        .alarm-info h3 {
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+        .alarm-info p {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 5px;
+        }
+        .alarm-item .delete-btn {
+            background: transparent;
+            border: none;
+            color: #ff4d4d;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* دکمه‌های ذخیره و انصراف */
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .form-buttons button {
+            flex: 1;
+            padding: 12px;
+        }
+        .btn-cancel {
+            background: #333 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- نوار دکمه‌ها (ناوبری) -->
+        <div class="navbar">
+            <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> Home</a>
+            <a href="notes.html" class="nav-btn"><i class="fas fa-book-open"></i> Notes</a>
+            <a href="tasks.html" class="nav-btn"><i class="fas fa-tasks"></i> Tasks</a>
+            <a href="timer.html" class="nav-btn"><i class="fas fa-clock"></i> Timer</a>
+            <a href="links.html" class="nav-btn"><i class="fas fa-link"></i> Links</a>
+            <a href="alarm.html" class="nav-btn active"><i class="fas fa-bell"></i> Alarm</a>
+            <a href="support.html" class="nav-btn"><i class="fas fa-headset"></i> Support</a>
+        </div>
+
+        <div class="alarm-container">
+            <h2 style="text-align: center; color: var(--accent); margin-bottom: 20px;">Set New Alarm</h2>
+
+            <!-- فرم تنظیم آلارم -->
+            <div class="alarm-form">
+                <input type="text" id="alarmTitle" placeholder="Alarm Title (e.g., Study Math)">
+                
+                <!-- انتخاب ساعت و دقیقه -->
+                <div class="time-picker">
+                    <select id="alarmHour"></select>
+                    <span>:</span>
+                    <select id="alarmMinute"></select>
+                </div>
+
+                <!-- انتخاب روزهای هفته -->
+                <div class="days-picker" id="daysPicker">
+                    <div class="day-btn" data-day="0">Su</div>
+                    <div class="day-btn" data-day="1">Mo</div>
+                    <div class="day-btn" data-day="2">Tu</div>
+                    <div class="day-btn" data-day="3">We</div>
+                    <div class="day-btn" data-day="4">Th</div>
+                    <div class="day-btn" data-day="5">Fr</div>
+                    <div class="day-btn" data-day="6">Sa</div>
+                </div>
+
+                <div class="form-buttons">
+                    <button class="btn-cancel" onclick="resetForm()">Cancel</button>
+                    <button onclick="saveAlarm()">Save Alarm</button>
+                </div>
+            </div>
+
+            <!-- لیست آلارم‌های ذخیره شده -->
+            <div class="alarm-list" id="alarmList">
+                <!-- آلارم‌ها اینجا نمایش داده می‌شن -->
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+
+    <script>
+        // ================== منطق آلارم ==================
+        let alarms = JSON.parse(localStorage.getItem('myPlannerAlarms')) || [];
+        let selectedDays = [];
+
+        const hourSelect = document.getElementById('alarmHour');
+        const minuteSelect = document.getElementById('alarmMinute');
+        const alarmList = document.getElementById('alarmList');
+        const dayBtns = document.querySelectorAll('.day-btn');
+
+        // ۱. پر کردن ساعت و دقیقه
+        for (let i = 0; i < 24; i++) {
+            let option = document.createElement('option');
+            option.value = i;
+            option.innerText = String(i).padStart(2, '0');
+            hourSelect.appendChild(option);
+        }
+        for (let i = 0; i < 60; i++) {
+            let option = document.createElement('option');
+            option.value = i;
+            option.innerText = String(i).padStart(2, '0');
+            minuteSelect.appendChild(option);
+        }
+
+        // ۲. انتخاب روزهای هفته
+        dayBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const day = parseInt(btn.getAttribute('data-day'));
+                if (selectedDays.includes(day)) {
+                    selectedDays = selectedDays.filter(d => d !== day);
+                    btn.classList.remove('selected');
+                } else {
+                    selectedDays.push(day);
+                    btn.classList.add('selected');
+                }
+            });
+        });
+
+        // ۳. ذخیره آلارم
+        function saveAlarm() {
+            const title = document.getElementById('alarmTitle').value || 'Alarm';
+            const hour = parseInt(hourSelect.value);
+            const minute = parseInt(minuteSelect.value);
+            
+            if (selectedDays.length === 0) {
+                alert("Please select at least one day.");
+                return;
+            }
+
+            alarms.push({ title, hour, minute, days: selectedDays });
+            localStorage.setItem('myPlannerAlarms', JSON.stringify(alarms));
+            resetForm();
+            renderAlarms();
+        }
+
+        // ۴. نمایش لیست آلارم‌ها
+        function renderAlarms() {
+            alarmList.innerHTML = '';
+            alarms.forEach((alarm, index) => {
+                const div = document.createElement('div');
+                div.className = 'alarm-item';
+                
+                // تبدیل شماره روزها به اسم
+                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                const daysString = alarm.days.map(d => dayNames[d]).join(', ');
+
+                div.innerHTML = `
+                    <div class="alarm-info">
+                        <h3>${String(alarm.hour).padStart(2, '0')}:${String(alarm.minute).padStart(2, '0')}</h3>
+                        <p>${alarm.title} - ${daysString}</p>
+                    </div>
+                    <button class="delete-btn" onclick="deleteAlarm(${index})"><i class="fas fa-trash"></i></button>
+                `;
+                alarmList.appendChild(div);
+            });
+        }
+
+        // ۵. پاک کردن آلارم
+        function deleteAlarm(index) {
+            alarms.splice(index, 1);
+            localStorage.setItem('myPlannerAlarms', JSON.stringify(alarms));
+            renderAlarms();
+        }
+
+        // ۶. ریست کردن فرم
+        function resetForm() {
+            document.getElementById('alarmTitle').value = '';
+            hourSelect.value = 0;
+            minuteSelect.value = 0;
+            selectedDays = [];
+            dayBtns.forEach(btn => btn.classList.remove('selected'));
+        }
+
+        // رندر اولیه
+        renderAlarms();
+    </script>
+</body>
+</html>
